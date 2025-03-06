@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "target",
+    "strict": true,
+  },
+  "include": [
+    "src"
+  ]
+}
