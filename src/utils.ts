@@ -1,3 +1,5 @@
+import { readFile } from "fs/promises";
+
 export function dedent(str: string): string {
     const lines = str.split("\n");
     const minIndent = Math.min(
@@ -8,3 +10,7 @@ export function dedent(str: string): string {
 
     return lines.map(line => line.slice(minIndent)).join("\n").trim();
 }
+
+export const readToString = async (path: string): Promise<string> => {
+    return readFile(path, "utf8");
+};

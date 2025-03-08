@@ -7,7 +7,7 @@ export default [
   {
     files: ["**/*.{js,mjs,cjs,ts}"],
     ignores: [
-      "./target/**",
+      "target/*",
     ],
     languageOptions: { globals: globals.node },
     rules: {
@@ -17,6 +17,18 @@ export default [
       "comma-dangle": ["error", "always-multiline"],
     },
   },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
+  {
+    ignores: [
+      "target/*",
+    ],
+    ...pluginJs.configs.recommended,
+  },
+  ...tseslint.configs.recommended.map(recommended => {
+    return {
+      ignores: [
+        "target/*",
+      ],
+      ...recommended,
+    };
+  }),
 ];
