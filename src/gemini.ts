@@ -6,6 +6,9 @@ const gemini = new GoogleGenerativeAI(geminiApiKey);
 
 const model = gemini.getGenerativeModel({
     model: "gemini-2.0-flash",
+    generationConfig: {
+        responseMimeType: "application/json",
+    },
 });
 
 export async function generateContent(prompt: string): Promise<string> {
