@@ -1,12 +1,11 @@
-import { chat } from "./client";
-import { suppliers } from "./models";
-import { readToString } from "./utils";
+import { oneTurnChat } from "./client";
+import { initContext } from "./context";
 
 (async () => {
-    const promptPath = "static/prompt.md";
-    const prompt = await readToString(promptPath);
-
-    const model = suppliers["gemini"];
-    const response = await chat(model, prompt);
-    console.log(response.choices[0].message);
+    let context = await initContext({
+        task: "实现一个命令行的计算器。",
+    });
+    while (true) {
+        context = await oneTurnChat(context);
+    }
 })();

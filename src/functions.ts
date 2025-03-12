@@ -1,81 +1,90 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import { draftPath, workspacePath } from "./workspace";
+import { todoPath, workspacePath } from "./workspace";
 import { readToString } from "./utils";
-import { execSync } from "child_process";
+import { execSync, SpawnSyncReturns } from "child_process";
+import { question } from "./stdio";
+import { tools } from "./tools";
 
-export type FunctionCall =
-    & {
-        function: string,
-        request: object
-    }
-    | {
-        function: "read_file",
-        request: ReadFileRequest,
-    }
-    | {
-        function: "write_file",
-        request: WriteFileRequest,
-    }
-    | {
-        function: "shell",
-        request: ShellRequest,
-    }
-    | {
-        function: "review_draft",
-        request: void
-    }
-    | {
-        function: "update_draft",
-        request: UpdateDraftRequest,
-    };
+export type FunctionName = typeof tools[number]["function"]["name"];
 
 export type FunctionCallResponse = {
     status: "success" | "fail",
-    result?: object | string,
+    result?: object,
 };
 
-export async function functionCall(fc: FunctionCall): Promise<FunctionCallResponse> {
-    switch (fc.function) {
+export async function functionCall(workspace: string, name: FunctionName, args: string): Promise<FunctionCallResponse> {
+    switch (name) {
+        case "notify_user": {
+            notifyUser(JSON.parse(args) as NotifyUserRequest);
+            return {
+                status: "success",
+            };
+        }
+        case "ask_user": {
+            return {
+                status: "success",
+                result: {
+                    response: await askUser(JSON.parse(args) as AskUserRequest),
+                },
+            };
+        }
         case "read_file":
             return {
                 status: "success",
                 result: {
-                    content: await readFile("default", fc.request as ReadFileRequest),
+                    content: await readFile(workspace, JSON.parse(args) as ReadFileRequest),
                 },
             };
         case "write_file":
-            await writeFile("default", fc.request as WriteFileRequest);
+            await writeFile(workspace, JSON.parse(args) as WriteFileRequest);
             return {
                 status: "success",
             };
-        case "shell":
-            return {
-                status: "success",
-                result: {
-                    output: shell("default", fc.request as ShellRequest),
-                },
-            };
-        case "review_draft":
+        case "shell_exec":
             return {
                 status: "success",
                 result: {
-                    draft: await reviewDraft("default"),
+                    output: shell_exec(workspace, JSON.parse(args) as ShellExecRequest),
                 },
             };
-        case "update_draft":
-            await updateDraft("default", fc.request as UpdateDraftRequest);
+        case "review_todo":
+            return {
+                status: "success",
+                result: {
+                    todo: await reviewTodo(workspace),
+                },
+            };
+        case "update_todo": {
+            await updateTodo(workspace, JSON.parse(args) as UpdateTodoRequest);
             return {
                 status: "success",
             };
-        default:
-            return {
-                status: "fail",
-                result: {
-                    error: `Function ${fc.function} not found`,
-                },
-            };
+        }
+        case "pause": {
+            process.exit(0);
+        }
     }
+}
+
+type NotifyUserRequest = {
+    message: string,
+}
+
+function notifyUser(
+    request: NotifyUserRequest,
+) {
+    console.log(request.message);
+}
+
+type AskUserRequest = {
+    message: string,
+}
+
+async function askUser(
+    request: AskUserRequest,
+): Promise<string> {
+    return await question(request.message);
 }
 
 type ReadFileRequest = {
@@ -100,31 +109,41 @@ async function writeFile(
     request: WriteFileRequest,
 ) {
     const filePath = path.join(workspacePath(workspace), request.path);
-    await fs.writeFile(filePath, request.content);
+    const dirPath = path.join(workspacePath(workspace), path.dirname(request.path));
+    await fs.mkdir(dirPath, { recursive: true });
+    await fs.writeFile(filePath, request.content, { encoding: "utf-8" });
 }
 
-type ShellRequest = {
+type ShellExecRequest = {
     command: string,
 }
 
-function shell(
+function shell_exec(
     workspace: string,
-    request: ShellRequest,
+    request: ShellExecRequest,
 ): string {
-    return execSync(request.command, { encoding: "utf-8" });
+    try {
+        return execSync(request.command, {
+            cwd: workspacePath(workspace),
+            encoding: "utf-8",
+        });
+    } catch (error) {
+        const execError = error as SpawnSyncReturns<string>;
+        return execError.stderr;
+    }
 }
 
-async function reviewDraft(workspace: string) {
-    return readToString(draftPath(workspace));
+async function reviewTodo(workspace: string) {
+    return readToString(todoPath(workspace));
 }
 
-type UpdateDraftRequest = {
+type UpdateTodoRequest = {
     content: string
 }
 
-async function updateDraft(
+async function updateTodo(
     workspace: string,
-    request: UpdateDraftRequest,
+    request: UpdateTodoRequest,
 ) {
-    await fs.writeFile(draftPath(workspace), request.content);
+    await fs.writeFile(todoPath(workspace), request.content);
 }

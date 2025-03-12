@@ -1,23 +1,65 @@
-import { Supplier } from "./models";
+import { Context, History, iterateContext } from "./context";
+import { functionCall, FunctionName } from "./functions";
+import { SupplierName, suppliers } from "./models";
+import { tools } from "./tools";
+import { trim } from "./utils";
 import OpenAI from "openai";
+import { dirWorkspace } from "./workspace";
 
-export const chat = async (supplier: Supplier, prompt: string) => {
-    const openai = new OpenAI({
-        baseURL: supplier.baseURL,
-        apiKey: supplier.apiKey,
-    });
-    return await openai.chat.completions.create({
+const supplierName = process.env.MODEL! as SupplierName;
+const supplier = suppliers[supplierName];
+const openai = new OpenAI({
+    baseURL: supplier.baseURL,
+    apiKey: supplier.apiKey,
+});
+
+export const oneTurnChat = async (context: Context): Promise<Context> => {
+    const contextMessage = await genInfo(context.workspace);
+    const response = await openai.chat.completions.create({
         model: supplier.model,
         messages: [
+            ...context.histories,
             {
                 role: "system",
-                content: prompt,
-            },
-            {
-                role: "user",
-                content: "我想做一个命令行程序，可以接受两个数，输出它们的和。",
+                content: contextMessage,
             },
         ],
-        response_format: { type: "json_object" },
+        tools: [...tools],
+        tool_choice: "auto",
+        response_format: { type: "text" },
     });
+    const message = response.choices[0].message;
+    const newHistories: History[] = [message];
+    const content = message.content;
+    if (content) {
+        console.log("message: ", content);
+    }
+    const tool_calls = response.choices[0].message.tool_calls;
+    if (tool_calls && tool_calls.length > 0) {
+        console.log(tool_calls);
+        for (const tool_call of tool_calls) {
+            const name = tool_call.function.name as FunctionName;
+            const args = tool_call.function.arguments;
+            const response = await functionCall(context.workspace, name, args);
+            newHistories.push({
+                role: "tool",
+                tool_call_id: tool_call.id,
+                content: JSON.stringify(response),
+            });
+        }
+    }
+    return iterateContext(context, newHistories);
+};
+
+export const genInfo = async (workspace: string): Promise<string> => {
+    const files = (await dirWorkspace(workspace)).join("\n");
+    return trim(`
+# 当地时间
+
+${new Date().toLocaleString()}
+
+# workspace 文件列表
+
+${files}
+    `);
 };
