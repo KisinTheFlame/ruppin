@@ -1,5 +1,3 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
@@ -9,19 +7,20 @@ export default [
     ignores: [
       "target/*",
     ],
-    languageOptions: { globals: globals.node },
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: "tsconfig.json", // 指定 TypeScript 配置文件路径
+        sourceType: "module",
+      },
+    },
     rules: {
       "semi": ["error", "always"],
+      "no-extra-semi": "error",
       "quotes": ["error", "double"],
       "eol-last": ["error", "always"],
       "comma-dangle": ["error", "always-multiline"],
     },
-  },
-  {
-    ignores: [
-      "target/*",
-    ],
-    ...pluginJs.configs.recommended,
   },
   ...tseslint.configs.recommended.map(recommended => {
     return {

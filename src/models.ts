@@ -2,10 +2,11 @@ import OpenAI from "openai";
 
 const GeminiApiKey = process.env.GEMINI_API_KEY!;
 const DeepseekApiKey = process.env.DEEPSEEK_API_KEY!;
+const VolcengineApiKey = process.env.VOLCENGINE_API_KEY!;
 
 export type AIClient = OpenAI;
 
-export type SupplierName = "gemini" | "deepseek";
+export type SupplierName = "gemini" | "deepseek" | "volcengine";
 
 export type Supplier = {
     baseURL: string,
@@ -23,5 +24,10 @@ export const suppliers: { [key in SupplierName]: Supplier } = {
         baseURL: "https://api.deepseek.com",
         apiKey: DeepseekApiKey,
         model: "deepseek-chat",
+    },
+    volcengine: {
+        baseURL: "https://ark.cn-beijing.volces.com/api/v3",
+        apiKey: VolcengineApiKey,
+        model: "deepseek-v3-241226",
     },
 };
