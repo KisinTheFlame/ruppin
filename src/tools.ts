@@ -9,12 +9,10 @@ type Tool =
             strict: true,
             parameters?: {
                 type: "object",
-                properties: {
-                    [property: string]: {
-                        type: "string" | "number" | "bool",
-                        description: string,
-                    },
-                },
+                properties: Record<string, {
+                    type: "string" | "number" | "bool",
+                    description: string,
+                }>,
             },
         },
     };
@@ -135,11 +133,11 @@ export const tools = [
         },
     },
     {
-        type:"function",
+        type: "function",
         function: {
             name: "pause",
             description: "当你完成工作时，调用这个函数来暂停，以便用户验收。",
             strict: true,
         },
     },
-] as const satisfies Array<Tool>;
+] as const satisfies Tool[];

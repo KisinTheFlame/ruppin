@@ -6,4 +6,7 @@ build:
 	npx tsc
 
 run: build
-	node target/main.js
+	node target/src/main.js
+
+clean:
+	rm -rf target
