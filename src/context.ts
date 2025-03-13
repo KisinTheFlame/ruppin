@@ -6,7 +6,7 @@ export type History = ChatCompletionMessageParam;
 
 export type Context = {
     readonly workspace: string,
-    readonly histories: Array<History>,
+    readonly histories: History[],
 }
 
 const promptPath = "static/prompt.md";
@@ -33,7 +33,7 @@ export const initContext = async (
     };
 };
 
-export const iterateContext = async (context: Context, newHistories: History[]): Promise<Context> => {
+export const iterateContext = (context: Context, newHistories: History[]): Context => {
     return {
         workspace: context.workspace,
         histories: [...context.histories, ...newHistories],

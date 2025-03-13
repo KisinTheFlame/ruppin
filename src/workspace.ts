@@ -2,6 +2,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { listFiles } from "./utils";
 import { formatDate } from "date-fns";
+import { mkdirSync } from "fs";
 
 const WorkspaceRoot = "/Users/kisin/.ruppin/workspace";
 
@@ -24,7 +25,7 @@ export async function createWorkspace(): Promise<string> {
     return workspaceName;
 }
 
-export const dirWorkspace = async (workspace: string): Promise<Array<string>> => {
+export const dirWorkspace = async (workspace: string): Promise<string[]> => {
     const allFiles = await listFiles(workspacePath(workspace));
     return allFiles.filter(path => !/\.ruppin.*/.test(path));
 };
@@ -34,6 +35,4 @@ const newWorkspaceName = (): string => {
     return formatDate(now, `yyyy-MM-dd_HH-mm-ss_${now.getMilliseconds()}`);
 };
 
-(async () => {
-    await fs.mkdir(WorkspaceRoot, { recursive: true });
-})();
+mkdirSync(WorkspaceRoot, { recursive: true });

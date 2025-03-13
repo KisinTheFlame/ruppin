@@ -1,19 +1,14 @@
 import tseslint from "typescript-eslint";
 
+const ignores = [
+  "target/**",
+];
+
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
     files: ["**/*.{js,mjs,cjs,ts}"],
-    ignores: [
-      "target/*",
-    ],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        project: "tsconfig.json", // 指定 TypeScript 配置文件路径
-        sourceType: "module",
-      },
-    },
+    ignores: ignores,
     rules: {
       "semi": ["error", "always"],
       "no-extra-semi": "error",
@@ -22,12 +17,31 @@ export default [
       "comma-dangle": ["error", "always-multiline"],
     },
   },
-  ...tseslint.configs.recommended.map(recommended => {
+  ...tseslint.configs.recommended.map(rules => {
     return {
-      ignores: [
-        "target/*",
-      ],
-      ...recommended,
+      ignores: ignores,
+      ...rules,
+    };
+  }),
+  ...tseslint.configs.strict.map(rules => {
+    return {
+      ignores: ignores,
+      ...rules,
+    };
+  }),
+  ...tseslint.configs.stylistic.map(rules => {
+    return {
+      ignores: ignores,
+      languageOptions: {
+        parserOptions: {
+          projectService: true,
+          tsconfigRootDir: __dirname,
+        },
+      },
+      rules: {
+        "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+      },
+      ...rules,
     };
   }),
 ];
