@@ -6,6 +6,6 @@
     "strict": true,
   },
   "include": [
-    "src",
+    "src", "src/main.ts", "eslint.config.ts"
   ]
 }
