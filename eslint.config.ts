@@ -7,13 +7,6 @@ export default [
     ignores: [
       "target/*",
     ],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        project: "tsconfig.json", // 指定 TypeScript 配置文件路径
-        sourceType: "module",
-      },
-    },
     rules: {
       "semi": ["error", "always"],
       "no-extra-semi": "error",

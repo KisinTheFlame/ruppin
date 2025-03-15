@@ -7,3 +7,6 @@ build:
 
 run: build
 	node target/main.js
+
+clean:
+	rm -rf target

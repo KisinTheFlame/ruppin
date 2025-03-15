@@ -27,3 +27,27 @@ export const readToStringSync = (path: string): string => {
 export const listFiles = async (dir: string): Promise<Array<string>> => {
     return await readdir(dir, { encoding: "utf-8", recursive: true });
 };
+
+export class Queue<T> {
+    private readonly queue: Array<T> = [];
+    private readonly resolves: Array<(value: T) => void> = [];
+
+    public enqueue(t: T) {
+        const resolve = this.resolves.shift();
+        if (resolve !== undefined) {
+            resolve(t);
+            return;
+        }
+        this.queue.push(t);
+    }
+
+    public async dequeue(): Promise<T> {
+        const t = this.queue.shift();
+        if (t !== undefined) {
+            return t;
+        }
+        return new Promise((resolve) => {
+            this.resolves.push(resolve);
+        });
+    }
+}
