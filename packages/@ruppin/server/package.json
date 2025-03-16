@@ -1,0 +1,9 @@
+{
+    "name": "@ruppin/server",
+    "version": "1.0.0",
+    "dependencies": {
+        "@ruppin/contract": "^1.0.0",
+        "@types/ws": "^8.18.0",
+        "ws": "^8.18.1"
+    }
+}

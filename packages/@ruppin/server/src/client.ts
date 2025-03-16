@@ -1,10 +1,11 @@
 import { Context, History, iterateContext } from "./context";
-import { functionCall, FunctionName } from "./functions";
+import { functionCall } from "./functions";
 import { SupplierName, suppliers } from "./models";
 import { tools } from "./tools";
 import { trim } from "./utils";
 import OpenAI from "openai";
 import { dirWorkspace } from "./workspace";
+import { FunctionName } from "@ruppin/contract/src/messages";
 
 const supplierName = (process.env.MODEL ?? "gemini") as SupplierName;
 const supplier = suppliers[supplierName];

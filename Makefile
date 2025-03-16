@@ -5,8 +5,8 @@ all: build
 build:
 	npx tsc
 
-run: build
-	node target/src/main.js
+server: build
+	node target/packages/@ruppin/server/src/main.js
 
 clean:
 	rm -rf target

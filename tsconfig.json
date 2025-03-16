@@ -3,9 +3,7 @@
     "module": "CommonJS",
     "outDir": "target",
     "target": "ES2015",
-    "strict": true,
+    "strict": true
   },
-  "include": [
-    "src", "src/main.ts", "eslint.config.ts"
-  ]
+  "include": ["packages/**/*.ts", "eslint.config.ts"]
 }

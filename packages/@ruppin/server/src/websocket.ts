@@ -7,7 +7,7 @@ export class WebSocketConnection<LocalMessage, RemoteMessage> {
 
     constructor(ws: WebSocket) {
         this.ws = ws;
-        ws.on("message", async (data: string) => {
+        ws.on("message", (data: string) => {
             const message = JSON.parse(data) as RemoteMessage;
             this.messageQueue.enqueue(message);
         });

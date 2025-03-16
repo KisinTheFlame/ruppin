@@ -1,51 +1,7 @@
 import { ChatCompletionAssistantMessageParam, ChatCompletionToolMessageParam } from "openai/resources";
+import { FunctionArgs, FunctionName, ProgressAppend } from "@ruppin/contract/src/messages";
 import { History } from "./context";
-import { FunctionArgs, FunctionCallResponse, FunctionName } from "./functions";
-
-export type ServerMessage =
-    | {
-        action: "notify_user",
-        message: string,
-    }
-    | {
-        action: "ask_user",
-    }
-    | {
-        action: "progress_append",
-        info: ProgressAppend,
-    }
-
-export type ProgressAppend =
-    & {
-        type: string,
-    }
-    & (
-        | {
-            type: "thought",
-            thought: string,
-        }
-        | {
-            type: "notify",
-            message: string,
-        }
-        | {
-            type: "tool",
-            name: FunctionName,
-            args?: FunctionArgs,
-            response: {
-                status: "success" | "fail",
-                result?: object,
-            },
-        }
-        | {
-            type: "user"
-            message: string,
-        }
-    )
-
-export type ClientMessage = {
-    message: string,
-}
+import { FunctionCallResponse } from "./functions";
 
 export const diffHistories = (oldHistories: History[], newHistories: History[]): ProgressAppend[] => {
     const start = oldHistories.length;

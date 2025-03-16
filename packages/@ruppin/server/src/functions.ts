@@ -3,11 +3,7 @@ import * as path from "path";
 import { todoPath, workspacePath } from "./workspace";
 import { readToString } from "./utils";
 import { execSync, SpawnSyncReturns } from "child_process";
-import { tools } from "./tools";
-
-export type FunctionName = typeof tools[number]["function"]["name"];
-
-export type FunctionArgs = Record<string, string | number | boolean>
+import { FunctionName } from "@ruppin/contract/src/messages";
 
 export type FunctionCallResponse = {
     status: "success" | "fail",

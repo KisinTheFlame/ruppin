@@ -1,38 +1,39 @@
 {
-  "name": "ruppin",
-  "version": "1.0.0",
-  "description": "an AI agent",
-  "keywords": [
-    "agent"
-  ],
-  "homepage": "https://github.com/KisinTheFlame/ruppin#readme",
-  "bugs": {
-    "url": "https://github.com/KisinTheFlame/ruppin/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/KisinTheFlame/ruppin.git"
-  },
-  "license": "UNLICENSED",
-  "author": "Kisin Wen",
-  "type": "commonjs",
-  "main": "src/main.ts",
-  "scripts": {
-    "build": "npx tsc",
-    "start": "npm run build && node target/main.js",
-    "clean": "rm -rf target"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.20.0",
-    "eslint": "^9.20.1",
-    "globals": "^15.15.0",
-    "jiti": "^2.4.2",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.0"
-  },
-  "dependencies": {
-    "date-fns": "^4.1.0",
-    "openai": "^4.86.1",
-    "zod": "^3.24.2"
-  }
+    "name": "ruppin",
+    "version": "1.0.0",
+    "description": "an AI agent",
+    "keywords": [
+        "agent"
+    ],
+    "homepage": "https://github.com/KisinTheFlame/ruppin#readme",
+    "bugs": {
+        "url": "https://github.com/KisinTheFlame/ruppin/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KisinTheFlame/ruppin.git"
+    },
+    "license": "UNLICENSED",
+    "author": "Kisin Wen",
+    "type": "commonjs",
+    "workspaces": [
+        "packages/@ruppin/*"
+    ],
+    "scripts": {
+        "build": "npx tsc",
+        "start": "npm run build && node target/main.js",
+        "clean": "rm -rf target"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.20.0",
+        "@types/node": "^22.13.10",
+        "eslint": "^9.20.1",
+        "globals": "^15.15.0",
+        "jiti": "^2.4.2",
+        "typescript": "^5.7.3",
+        "typescript-eslint": "^8.24.0"
+    },
+    "dependencies": {
+        "date-fns": "^4.1.0"
+    }
 }
